@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Binetuuu/Projet_reconnaissance_objet.git'
+                git branch: 'main', url: 'https://github.com/Binetuuu/Projet_reconnaissance_objets.git'
             }
         }
 
