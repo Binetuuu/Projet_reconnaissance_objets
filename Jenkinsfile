@@ -1,3 +1,5 @@
+
+
 pipeline {
     agent any
 
@@ -15,7 +17,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    sh 'docker-compose build'
+                    bat 'docker-compose build'
                 }
             }
         }
@@ -24,7 +26,7 @@ pipeline {
             steps {
                 script {
                     // Ici je suppose que tu as des tests dans le service API
-                    sh 'docker-compose run --rm api pytest || echo "⚠️ Aucun test ou test échoué"'
+                    bat 'docker-compose run --rm api pytest || echo "⚠️ Aucun test ou test échoué"'
                 }
             }
         }
@@ -32,8 +34,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'docker-compose down'
-                    sh 'docker-compose up -d'
+                    bat 'docker-compose down'
+                    bat 'docker-compose up -d'
                 }
             }
         }
