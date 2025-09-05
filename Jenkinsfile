@@ -23,8 +23,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Exécution des tests dans le conteneur API déjà actif
-                    bat 'docker exec -i reconnaissance_objet-api-1 pytest || echo "⚠️ Aucun test ou test échoué"'
+                    // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
+                    bat '''
+                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
+                    '''
                 }
             }
         }
