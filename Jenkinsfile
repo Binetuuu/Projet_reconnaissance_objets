@@ -1,5 +1,3 @@
-
-
 pipeline {
     agent any
 
@@ -25,8 +23,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Ici je suppose que tu as des tests dans le service API
-                    bat 'docker-compose run --rm api pytest || echo "⚠️ Aucun test ou test échoué"'
+                    // Exécution des tests dans le conteneur API déjà actif
+                    bat 'docker exec -i reconnaissance_objet-api-1 pytest || echo "⚠️ Aucun test ou test échoué"'
                 }
             }
         }
@@ -34,7 +32,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'docker-compose down'
                     bat 'docker-compose up -d'
                 }
             }
