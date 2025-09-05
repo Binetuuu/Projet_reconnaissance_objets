@@ -1,0 +1,51 @@
+# Environnements Python
+venv/
+.env
+.env.local
+.env.development
+.env.production
+.python-version
+
+# Fichiers de cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packages Python
+*.egg
+*.egg-info
+dist/
+build/
+pip-wheel-metadata/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+.mlflow/
+
+# Modèles et données volumineuses
+**/models/
+**/training_data/
+*.pt
+*.pth
+*.h5
+*.weights
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.swp
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml

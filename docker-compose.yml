@@ -1,0 +1,85 @@
+# version: '3.8'
+
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.9.2
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./mlruns:/mlruns
+      - ./models:/models
+    networks:
+      - app_network
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:///mlruns.db
+      --default-artifact-root /models
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  api:
+    build: ./api
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./models:/models
+    depends_on:
+      - mlflow
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    networks:
+      - app_network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8502:8501"
+    environment:
+      - API_URL=http://api:8000  # <- important
+    depends_on:
+      - api
+    volumes:
+      - ./frontend/assets:/app/assets
+      - ./models:/app/models
+    networks:
+      - app_network
+
+  training:
+    build: ./training
+    volumes:
+      - ./training_data:/data
+      - ./models:/models
+    depends_on:
+      - mlflow
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    networks:
+      - app_network
+    restart: unless-stopped
+    command: >
+      bash -c "
+        echo '⏳ Attente de MLflow...';
+        sleep 10;
+        for i in {1..60}; do
+          if curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null; then
+            echo '✅ MLflow est prêt, démarrage du training';
+            python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000;
+            exit 0;
+          else
+            echo 'MLflow non disponible, tentative $i/60...';
+            sleep 1;
+          fi
+        done;
+        echo '❌ MLflow toujours indisponible après 60 tentatives';
+        exit 1;
+      "
+
+networks:
+  app_network:
+    driver: bridge

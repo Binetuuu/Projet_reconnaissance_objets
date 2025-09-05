@@ -1,0 +1,32 @@
+:root {
+    --primary: #4f46e5;
+    --secondary: #6366f1;
+    --background: #f9fafb;
+}
+
+.stApp {
+    background-color: var(--background);
+}
+
+.stButton>button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s;
+}
+
+.stButton>button:hover {
+    background-color: var(--secondary);
+    transform: scale(1.02);
+}
+
+.stMarkdown h1 {
+    color: var(--primary);
+}
+
+.stFileUploader>div>div {
+    border: 2px dashed var(--primary);
+    border-radius: 8px;
+}
