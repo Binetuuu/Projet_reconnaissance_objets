@@ -166,3 +166,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+# Vérification des runs enregistrés
+    client = MlflowClient()
+    runs = client.search_runs(experiment_ids=["0"], order_by=["start_time DESC"])
+    print("📊 Nombre de runs enregistrés :", len(runs))
