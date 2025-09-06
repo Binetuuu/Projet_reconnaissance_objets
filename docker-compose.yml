@@ -67,11 +67,11 @@ services:
     command: >
       bash -c "
         echo '⏳ Attente de MLflow...';
-        until curl -s api:8000/predict >/dev/null 2>&1; do
+        until curl -s http://api:8000/predict >/dev/null 2>&1; do
           echo 'api non disponible, attente 2s...';
           sleep 2;
         done;
-        until curl -s mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null 2>&1; do
+        until curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null 2>&1; do
          echo 'MLflow non dispo, attente 2s...';
          sleep 2;
         done;
