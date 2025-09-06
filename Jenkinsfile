@@ -25,10 +25,7 @@ pipeline {
                 script {
                     // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
                     bat '''
-                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings
-                    set ERRORLEVEL=%ERRORLEVEL%
-                    if %ERRORLEVEL% NEQ 0 echo "⚠️ Aucun test ou test échoué, on continue"
-                    exit /B 0
+                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
                     '''
                 }
             }
@@ -37,7 +34,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'docker-compose up -d'
+                    // Démarrer uniquement les services nécessaires (sans mlflow)
+                    bat 'docker-compose up -d api frontend training'
                 }
             }
         }
@@ -52,3 +50,4 @@ pipeline {
         }
     }
 }
+
