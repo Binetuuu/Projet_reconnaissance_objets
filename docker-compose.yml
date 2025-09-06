@@ -10,7 +10,6 @@ services:
       - ./models:/models          # stockage des artefacts (modèles)
     networks:
       - app_network
-    # Réduit le nombre de workers pour moins de RAM
     command: >
       mlflow server
       --host 0.0.0.0
@@ -21,7 +20,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G               # augmente la limite mémoire pour éviter les SIGKILL
+          memory: 512M
 
   api:
     build: ./api
@@ -67,18 +66,12 @@ services:
     command: >
       bash -c "
         echo '⏳ Attente de MLflow...';
-        for i in {1..60}; do
-          if curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null; then
-            echo '✅ MLflow est prêt, démarrage du training';
-            python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000;
-            exit 0;
-          else
-            echo 'MLflow non disponible, tentative $i/60...';
-            sleep 2;
-          fi
+        until nc -z mlflow 5000; do
+          echo 'MLflow non disponible, attente 2s...';
+          sleep 2;
         done;
-        echo '❌ MLflow toujours indisponible après 60 tentatives';
-        exit 1;
+        echo '✅ MLflow est prêt, démarrage du training';
+        python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000
       "
 
 networks:
