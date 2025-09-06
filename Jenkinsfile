@@ -15,27 +15,15 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    bat 'docker-compose build'
+                    bat 'docker-compose -f docker-compose.pipeline.yaml build'
                 }
             }
         }
 
-        // stage('Run Tests') {
-        //     steps {
-        //         script {
-        //             // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
-        //             bat '''
-        //             docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
-        //             '''
-        //         }
-        //     }
-        // }
-
         stage('Deploy') {
             steps {
                 script {
-                    // Démarrer uniquement les services nécessaires (sans mlflow)
-                    bat 'docker-compose up -d api frontend training'
+                    bat 'docker-compose -f docker-compose.pipeline.yaml up -d'
                 }
             }
         }
