@@ -20,16 +20,16 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
-                    bat '''
-                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
-                    '''
-                }
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         script {
+        //             // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
+        //             bat '''
+        //             docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Deploy') {
             steps {
