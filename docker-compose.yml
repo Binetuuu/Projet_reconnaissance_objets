@@ -17,10 +17,10 @@ services:
       --backend-store-uri sqlite:///mlruns.db
       --default-artifact-root /models
       --workers 1
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 512M
 
   api:
     build: ./api
