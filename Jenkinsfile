@@ -25,7 +25,10 @@ pipeline {
                 script {
                     // Exécuter pytest dans le conteneur API mais ne jamais faire échouer le pipeline
                     bat '''
-                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings || echo "⚠️ Aucun test ou test échoué, on continue"
+                    docker exec -i reconnaissance_objet-api-1 pytest --maxfail=1 --disable-warnings
+                    set ERRORLEVEL=%ERRORLEVEL%
+                    if %ERRORLEVEL% NEQ 0 echo "⚠️ Aucun test ou test échoué, on continue"
+                    exit /B 0
                     '''
                 }
             }
