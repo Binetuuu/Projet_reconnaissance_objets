@@ -1,13 +1,13 @@
-# version: '3.8'
+version: '3.8'
 
 services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.9.2
     ports:
-      - "5001:5000"  # accès externe via 5001
+      - "5001:5000" # accès externe via 5001
     volumes:
-      - ./mlruns:/mlruns          # stockage des runs
-      - ./models:/models          # stockage des artefacts (modèles)
+      - ./mlruns:/mlruns # stockage des runs
+      - ./models:/models # stockage des artefacts (modèles)
     networks:
       - app_network
     command: >
@@ -72,13 +72,40 @@ services:
           sleep 2;
         done;
         until curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null 2>&1; do
-         echo 'MLflow non dispo, attente 2s...';
-         sleep 2;
+          echo 'MLflow non dispo, attente 2s...';
+          sleep 2;
         done;
         echo '✅ MLflow est prêt, démarrage du training';
         python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000
       "
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000" # accès à l'interface Grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app_network
+    depends_on:
+      - api
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # mot de passe admin par défaut
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - app_network
+
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  grafana-data:
