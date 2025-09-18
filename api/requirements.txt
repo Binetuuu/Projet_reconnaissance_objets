@@ -13,3 +13,4 @@ matplotlib==3.7.1
 python-multipart
 tqdm==4.66.1
 mlflow
+prometheus-fastapi-instrumentator
