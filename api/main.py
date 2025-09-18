@@ -25,8 +25,6 @@ app = FastAPI(
     description="API de détection d'objets avec YOLOv5",
     version="1.0"
 )
-app = FastAPI()
-
 Instrumentator().instrument(app).expose(app)
 
 # -----------------------------
