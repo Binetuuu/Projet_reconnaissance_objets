@@ -1,10 +1,10 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.9.2
     ports:
-      - "5001:5000" # accès externe via 5001
+      - "5001:5000"
     volumes:
       - ./mlruns:/mlruns
       - ./models:/models
@@ -18,6 +18,63 @@ services:
       --default-artifact-root /models
       --workers 1
 
+  api:
+    build: ./api
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./models:/models
+    depends_on:
+      - mlflow
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    networks:
+      - app_network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8502:8501"
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+    volumes:
+      - ./frontend/assets:/app/assets
+      - ./models:/app/models
+    networks:
+      - app_network
+
+  training:
+    build: ./training
+    volumes:
+      - ./training_data:/data
+      - ./models:/models
+    depends_on:
+      - mlflow
+      - api
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    networks:
+      - app_network
+    restart: unless-stopped
+    command: >
+      bash -c "
+        echo '⏳ Attente de MLflow...';
+        until curl -s http://api:8000/predict >/dev/null 2>&1; do
+          echo 'api non disponible, attente 2s...';
+          sleep 2;
+        done;
+        until curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null 2>&1; do
+          echo 'MLflow non dispo, attente 2s...';
+          sleep 2;
+        done;
+        echo '✅ MLflow est prêt, démarrage du training';
+        python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000
+      "
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -28,7 +85,7 @@ services:
     networks:
       - app_network
     depends_on:
-      - prometheus
+      - api
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
 
@@ -41,42 +98,6 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - app_network
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "8602:8501"
-    environment:
-      - API_URL=http://host.docker.internal:8002
-    networks:
-      - app_network
-
-  training:
-    build: ./training
-    volumes:
-      - ./training_data:/data
-      - ./models:/models
-    environment:
-      - PYTHONUNBUFFERED=1
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
-      - API_URL=http://host.docker.internal:8002
-    networks:
-      - app_network
-    restart: unless-stopped
-    command: >
-      bash -c "
-        echo '⏳ Attente de MLflow...';
-        until curl -s http://host.docker.internal:8002/predict >/dev/null 2>&1; do
-          echo 'API Jenkins non disponible, attente 2s...';
-          sleep 2;
-        done;
-        until curl -s http://mlflow:5000/api/2.0/mlflow/experiments/list >/dev/null 2>&1; do
-          echo 'MLflow non dispo, attente 2s...';
-          sleep 2;
-        done;
-        echo '✅ MLflow est prêt, démarrage du training';
-        python train.py --data /data/data.yaml --img 416 --batch 4 --mlflow-uri http://mlflow:5000
-      "
 
 networks:
   app_network:

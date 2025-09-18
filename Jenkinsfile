@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    bat 'docker-compose -f docker-compose.pipeline.yaml build'
+                    bat 'docker-compose -f docker-compose.yaml build'
                 }
             }
         }
@@ -23,7 +23,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'docker-compose -f docker-compose.pipeline.yaml up -d'
+                    bat 'docker-compose -f docker-compose.yaml up -d'
                 }
             }
         }
@@ -38,4 +38,3 @@ pipeline {
         }
     }
 }
-
