@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Projets-Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>fullStack_portfolio</h1>
+            <a href="ajouter-page.html" class="btn btn-primary"
+                style="flex: none; padding: 8px 15px; font-size: 0.9rem;">+ Ajouter</a>
+        </header>
+
+        <main>
+            <section style="margin-top: 20px;">
+                <h2>Projets Réalisés</h2>
+                <p style="color: var(--text-muted);">Voici la liste de vos travaux actuels</p>
+            </section>
+            <!-- Grille des projets -->
+            <div class="project-grid">
+
+                <!-- Projet 1 -->
+                <article class="project-item">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=500&q=80"
+                        alt="Aperçu Site E-commerce">
+                        <div class="project-tittle">
+                            <h3>Plateforme E-commerce Full Stack</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">Ajouté le 5 octobre 2023</p>
+                        </div>
+                    <div class="project-actions">
+                        <a href="first-project-details.html" class="btn-details">Voir détails</a>
+                        <button type="button" class="btn-delete">Supprimer</button>
+                    </div>
+
+                </article>
+
+                <!-- Projet 2 -->
+                <article class="project-item">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=500&q=80"
+                        alt="Aperçu App Mobile">
+                        <div class="project-tittle">
+                            <h3>Application mobile de santé</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">Ajouté le 15 septembre 2024</p>
+                        </div>
+                    <div class="project-actions">
+                        <a href="second-project-details.html" class="btn-details">Voir détails</a>
+                        <button type="button" class="btn-delete">Supprimer</button>
+                    </div>
+                </article>
+
+                <!-- Projet 3 -->
+                <article class="project-item">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80"
+                        alt="Aperçu Dashboard">
+                            <div class="project-tittle">
+                                <h3>Dashboard Analytics Temps Rel</h3>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">Ajouté le 10 novembre 2025</p>
+                            </div>
+                    <div class="project-actions">
+                        <a href="third-project-details.html" class="btn-details">Voir détails</a>
+                        <button type="button" class="btn-delete">Supprimer</button>
+                    </div>
+                </article>
+
+            </div>
+        </main>
+
+        <footer
+            style="margin-top: 50px; text-align: center; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            © 2026 fullStack_portfolio
+        </footer>
+    </div>
+
+</body>
+
+</html>
